@@ -18,23 +18,29 @@
 			$('#lowercase').typimate();
 			$('#uppercase').typimate({
 				animation: "none",
-				easing: "in",
+				direction: "backward",
 				duration: 600,
+				easing: "in",
 				interval: 500,
+				leaveNoTrace: false,
 				timeout: 500
 			});
 			$('#numbers').typimate({
 				animation: "fade",
-				easing: "out",
+				direction: "ends",
 				duration: 800,
+				easing: "out",
 				interval: 300,
+				leaveNoTrace: true,
 				timeout: 1000
 			});
 			$('#chars').typimate({
 				animation: "none",
-				easing: "inOut",
+				direction: "middle",
 				duration: 1000,
+				easing: "inOut",
 				interval: 100,
+				leaveNoTrace: false,
 				timeout: 1500
 			});
 		</script>
