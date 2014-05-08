@@ -100,14 +100,14 @@ SOFTWARE.
 			} else if (settings.direction == "ends") {
 				return {
 					count: 0,
-					end: Math.floor((e.length + 6) / 2),
+					end: e.length / 2,
 					dir: 1,
 					mirror: true
 				};
 			} else if (settings.direction == "middle") {
 				return {
-					count: Math.round(e.length / 2),
-					end: e.length,
+					count: Math.floor(e.length / 2),
+					end: e.length - 1,
 					dir: -1,
 					mirror: true
 				};
@@ -129,7 +129,7 @@ SOFTWARE.
 			var interval = setInterval(function(){
 				var complete = function() {
 					settings.onLetter();
-					if(completed >= counter.end) {
+					if(completed >= spans.length - 1) {
 						clearInterval(interval);
 						settings.onComplete();
 						if(settings.leaveNoTrace) {
@@ -141,9 +141,11 @@ SOFTWARE.
 					}
 					completed ++;
 				}
-				typeChar(spans[counter.count], complete);
-				if(counter.mirror){
-					typeChar(spans[spans.length - 1 - counter.count], complete);
+				if(counter.count <= counter.end) {
+					typeChar(spans[counter.count], complete);
+					if(counter.mirror){
+						typeChar(spans[spans.length - 1 - counter.count], complete);
+					}
 				}
 				counter.count += counter.dir;
 			}, settings.interval);
