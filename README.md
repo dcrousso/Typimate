@@ -2,7 +2,7 @@
 from the basic typewriter effect to fading drop-down letters
 
 ## Download
- Get the [raw](https://raw.github.com/dcrousso/jquery.typimate.js/master/jquery.typimate.js) script, download the complete [package](https://github.com/dcrousso/jquery.typimate.js/zipball/master) or fork it on [GitHub](https://github.com/dcrousso/jquery.typimate.js/).
+ Get the [raw](https://raw.github.com/dcrousso/Typimate/master/jquery.typimate.js) script, download the complete [package](https://github.com/dcrousso/Typimate/zipball/master) or fork it on [GitHub](https://github.com/dcrousso/Typimate/).
 
  [Let me know](http://devinrousso.com/contact) if you used this plugin and had fun with it.
 
