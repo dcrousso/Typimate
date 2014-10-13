@@ -25,6 +25,7 @@ interval | int | 100 | Time between each letter animation | Integer
 leaveNoTrace | boolean | true | Toggles whether element is set back to original form | true, false
 onComplete | function | $.noop | Function that runs once the animation is complete | Function
 onLetter | function | $.noop | Function that runs after each letter animation | Function
+scramble | boolean | false | Whether letters are temporarily scrambled while animating | true and false
 timeout | int | 0 | Timeout before starting the animation | Integer
 
 

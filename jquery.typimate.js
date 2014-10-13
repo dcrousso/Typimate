@@ -32,6 +32,7 @@ SOFTWARE.
 			leaveNoTrace: true,
 			onComplete: $.noop,
 			onLetter: $.noop,
+			scramble: false,
 			timeout: 0
 		};
 		if (options) $.extend(settings, options);
@@ -39,37 +40,31 @@ SOFTWARE.
 		var html = target.html();
 		var animation;
 		var counter;
+		if(settings.scramble) {
+			var scrambleChars = "`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?";
+		}
 
 		function splitTextIntoChars(e) {
-			var element = $(e);
-			var chars = element.text().split("");
-			var spans = [];
+			var chars = e.text().split("");
+			e.empty();
 			for(var i = 0; i < chars.length; i++) {
-				spans.push("<span>" + chars[i] + "</span>");
+				e.append("<span>" + chars[i] + "</span>");
 			}
-			element.html(spans);
 		}
 		function getChars(e) {
-			var element = $(e);
-			var children = element.children();
+			var children = e.children();
 			animation = setAnimation(children);
 			counter = setCounter(children);
 			return children;
 		}
-		function typeChar(e, callback) {
-			var element = $(e);
-			animation(element, callback);
-		}
 		function setAnimation(e) {
-			if(settings.animation == "none") {
+			if(settings.animation === "none") {
 				settings.duration = 0;
-			} else {
-				settings.duration = 400;
 			}
-			if(settings.easing == "out") {
+			if(settings.easing === "out") {
 				e.css({"opacity":1});
 				return outAnimation;
-			} else if(settings.easing == "inOut") {
+			} else if(settings.easing === "inOut") {
 				e.css({"opacity":0});
 				return inOutAnimation;
 			} else {
@@ -77,34 +72,47 @@ SOFTWARE.
 				return inAnimation;
 			}
 		}
-		function inAnimation(e, callback){
+		function inAnimation(e, callback) {
 			e.animate({"opacity":1}, settings.duration, callback);
 		}
-		function outAnimation(e, callback){
+		function outAnimation(e, callback) {
 			e.animate({"opacity":0}, settings.duration, callback);
 		}
-		function inOutAnimation(e, callback){
+		function inOutAnimation(e, callback) {
 			inAnimation(e, $.noop);
 			setTimeout(function(){
 				outAnimation(e, callback);
 			}, settings.timeout + settings.interval);
 		}
-		function setCounter(e){
-			if(settings.direction == "backward") {
+		function scramble(e) {
+			var t = e.text();
+			var count = 0;
+			var interval = setInterval(function() {
+				var rnum = Math.round(Math.random() * scrambleChars.length);
+				e.text(scrambleChars[rnum]);
+				if(count > 10) {
+					e.text(t);
+					clearInterval(interval);
+				}
+				count++;
+			}, 50);
+		}
+		function setCounter(e) {
+			if(settings.direction === "backward") {
 				return {
 					count: e.length - 1,
 					end: e.length - 1,
 					dir: -1,
 					mirror: false
 				};
-			} else if (settings.direction == "ends") {
+			} else if (settings.direction === "ends") {
 				return {
 					count: 0,
 					end: e.length / 2,
 					dir: 1,
 					mirror: true
 				};
-			} else if (settings.direction == "middle") {
+			} else if (settings.direction === "middle") {
 				return {
 					count: Math.floor(e.length / 2),
 					end: e.length - 1,
@@ -126,7 +134,7 @@ SOFTWARE.
 		var completed = 0;
 		var first = counter.count;
 		setTimeout(function() {
-			var interval = setInterval(function(){
+			var interval = setInterval(function() {
 				var complete = function() {
 					settings.onLetter();
 					if(completed >= spans.length - 1) {
@@ -142,9 +150,17 @@ SOFTWARE.
 					completed ++;
 				}
 				if(counter.count <= counter.end) {
-					typeChar(spans[counter.count], complete);
+					var e = $(spans[counter.count]);
+					animation(e, complete);
+					if(settings.scramble) {
+						scramble(e);
+					}
 					if(counter.mirror){
-						typeChar(spans[spans.length - 1 - counter.count], complete);
+						var eMirror = $(spans[spans.length - 1 - counter.count])
+						animation(eMirror, complete);
+						if(settings.scramble) {
+							scramble(eMirror);
+						}
 					}
 				}
 				counter.count += counter.dir;
