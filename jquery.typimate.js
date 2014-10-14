@@ -36,13 +36,55 @@ SOFTWARE.
 			timeout: 0
 		};
 		if (options) $.extend(settings, options);
-		var target = $(this);
-		var html = target.html();
-		var animation;
-		var counter;
 		if(settings.scramble) {
 			var scrambleChars = "`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?";
 		}
+		$(this).each(function() {
+			var target = $(this);
+			var html = target.html();
+			var animation;
+			var counter;
+			
+			splitTextIntoChars(target);
+			var spans = target.children();
+			animation = setAnimation(spans);
+			counter = setCounter(spans);
+			var completed = 0;
+			var first = counter.count;
+			setTimeout(function() {
+				var interval = setInterval(function() {
+					var complete = function() {
+						settings.onLetter();
+						if(completed >= spans.length - 1) {
+							clearInterval(interval);
+							settings.onComplete();
+							if(settings.leaveNoTrace) {
+								if($(spans[first]).css("opacity") == 0) {
+									target.css({"opacity":0});
+								}
+								target.html(html);
+							}
+						}
+						completed ++;
+					}
+					if(counter.count <= counter.end) {
+						var e = $(spans[counter.count]);
+						animation(e, complete);
+						if(settings.scramble) {
+							scramble(e);
+						}
+						if(counter.mirror){
+							var eMirror = $(spans[spans.length - 1 - counter.count])
+							animation(eMirror, complete);
+							if(settings.scramble) {
+								scramble(eMirror);
+							}
+						}
+					}
+					counter.count += counter.dir;
+				}, settings.interval);
+			}, settings.timeout);
+		});
 
 		function splitTextIntoChars(e) {
 			var chars = e.text().split("");
@@ -50,12 +92,6 @@ SOFTWARE.
 			for(var i = 0; i < chars.length; i++) {
 				e.append("<span>" + chars[i] + "</span>");
 			}
-		}
-		function getChars(e) {
-			var children = e.children();
-			animation = setAnimation(children);
-			counter = setCounter(children);
-			return children;
 		}
 		function setAnimation(e) {
 			if(settings.animation === "none") {
@@ -128,44 +164,6 @@ SOFTWARE.
 				};
 			}
 		}
-		
-		splitTextIntoChars(target);
-		var spans = getChars(target);
-		var completed = 0;
-		var first = counter.count;
-		setTimeout(function() {
-			var interval = setInterval(function() {
-				var complete = function() {
-					settings.onLetter();
-					if(completed >= spans.length - 1) {
-						clearInterval(interval);
-						settings.onComplete();
-						if(settings.leaveNoTrace) {
-							if($(spans[first]).css("opacity") == 0) {
-								target.css({"opacity":0});
-							}
-							target.html(html);
-						}
-					}
-					completed ++;
-				}
-				if(counter.count <= counter.end) {
-					var e = $(spans[counter.count]);
-					animation(e, complete);
-					if(settings.scramble) {
-						scramble(e);
-					}
-					if(counter.mirror){
-						var eMirror = $(spans[spans.length - 1 - counter.count])
-						animation(eMirror, complete);
-						if(settings.scramble) {
-							scramble(eMirror);
-						}
-					}
-				}
-				counter.count += counter.dir;
-			}, settings.interval);
-		}, settings.timeout);
 
 		return this;
 	};
