@@ -39,7 +39,8 @@ SOFTWARE.
 		if(settings.scramble) {
 			var scrambleChars = "`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?";
 		}
-		$(this).each(function() {
+		
+		return this.each(function() {
 			var target = $(this);
 			var html = target.html();
 			var animation;
@@ -164,7 +165,5 @@ SOFTWARE.
 				};
 			}
 		}
-
-		return this;
 	};
 })(jQuery);
